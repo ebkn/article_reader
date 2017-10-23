@@ -45,18 +45,34 @@
                     <connections>
                         <outlet property="headerView" destination="Baf-pj-dba" id="d7x-jM-Eb2"/>
                         <outlet property="sitesScrollView" destination="Vas-MW-1Ey" id="eYQ-aH-gIm"/>
+                        <segue destination="eDn-pu-du1" kind="show" identifier="ShowToArticleWebViewController" id="giM-VB-Y2v"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="604" y="107"/>
         </scene>
+        <!--Article Web View Controller-->
+        <scene sceneID="8dG-qr-zuQ">
+            <objects>
+                <viewController id="eDn-pu-du1" customClass="ArticleWebViewController" customModule="RSSReader" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="wTi-Ei-ok2">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="3Ls-fK-LKY"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ry6-XN-jhA" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1334" y="107"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="zj2-Cl-MLt">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="VVL-Zj-rth" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="DxX-kf-QoJ">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" id="DxX-kf-QoJ">
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="barTintColor" red="0.044462317052156919" green="0.062395115670749325" blue="0.13182570032661944" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                     </navigationBar>

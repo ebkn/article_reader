@@ -8,13 +8,17 @@
 
 import UIKit
 
-class ArticleViewController: UIViewController, UIScrollViewDelegate {
+class ArticleViewController: UIViewController, UIScrollViewDelegate, ArticleTableViewDelegate {
   @IBOutlet weak var headerView: UIView!
   @IBOutlet weak var sitesScrollView: UIScrollView!
   
   let wired = "WIRED"
   let shiki = "100SHIKI"
   let cinra = "CINRA.NET"
+  
+  let wiredURL = "https://wired.jp/rssfeeder/"
+  let shikiURL =  "https://www.100shiki.com/feed"
+  let cinraURL =   "https://www.cinra.net/feed"
   
   let wiredImageName = "RSS_images/wired_top_image.png"
   let shikiImageName = "RSS_images/100shiki_top_image.png"
@@ -27,6 +31,8 @@ class ArticleViewController: UIViewController, UIScrollViewDelegate {
   
   var tabButtons: Array<UIButton> = []
   
+  var currentSelectedArticle: Article?
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -37,19 +43,26 @@ class ArticleViewController: UIViewController, UIScrollViewDelegate {
     setTabButton(self.view.center.x, text: "100", color: yellow, tag: 2)
     setTabButton(self.view.center.x * 3 / 2, text: "C", color: red, tag: 3)
     
-    setArticleTableView(0, wired, wiredImageName, blue)
-    setArticleTableView(self.view.frame.width, shiki, shikiImageName, yellow)
-    setArticleTableView(self.view.frame.width * 2, cinra, cinraImageName, red)
+    setArticleTableView(0, wired, wiredURL, wiredImageName, blue)
+    setArticleTableView(self.view.frame.width, shiki, shikiURL, shikiImageName, yellow)
+    setArticleTableView(self.view.frame.width * 2, cinra, cinraURL, cinraImageName, red)
     
     sitesScrollView.delegate = self
     
     setSelectedButton(tabButtons[0], true)
   }
   
-  func setArticleTableView(_ x: CGFloat, _ siteName: String, _ siteImageName: String, _ color: UIColor) {
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    self.navigationController?.setNavigationBarHidden(true, animated: true)
+  }
+  
+  func setArticleTableView(_ x: CGFloat, _ siteName: String, _ siteURL: String, _ siteImageName: String, _ color: UIColor) {
     let frame = CGRect(x: x, y: 0, width: self.view.frame.width, height: self.view.frame.height - headerView.frame.height)
     let articleView = ArticleTableView(frame: frame, style: UITableViewStyle.plain)
+    articleView.customDelegate = self
     articleView.siteName = siteName
+    articleView.loadRSS(siteURL)
     articleView.siteImageName = siteImageName
     articleView.color = color
     sitesScrollView.addSubview(articleView)
@@ -105,6 +118,16 @@ class ArticleViewController: UIViewController, UIScrollViewDelegate {
   func setSelectedButton(_ button: UIButton, _ selected: Bool) {
     button.isSelected = selected
     button.layer.borderColor = button.titleLabel?.textColor.cgColor
+  }
+  
+  func didSelectTableViewCell(article: Article) {
+    currentSelectedArticle = article
+    self.performSegue(withIdentifier: "ShowToArticleWebViewController", sender: self)
+  }
+  
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    let articleWebViewController = segue.destination as! ArticleWebViewController
+    articleWebViewController.article = currentSelectedArticle
   }
 
   override func didReceiveMemoryWarning() {
