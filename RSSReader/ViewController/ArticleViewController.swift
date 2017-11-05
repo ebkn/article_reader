@@ -50,6 +50,8 @@ class ArticleViewController: UIViewController, UIScrollViewDelegate, ArticleTabl
     sitesScrollView.delegate = self
     
     setSelectedButton(tabButtons[0], true)
+    
+    ArticleStocks.sharedInstance.getArticles()
   }
   
   override func viewWillAppear(_ animated: Bool) {

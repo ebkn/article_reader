@@ -8,6 +8,7 @@
 
 import UIKit
 import WebKit
+import Social
 
 class ArticleWebViewController: UIViewController, WKNavigationDelegate {
   let black = UIColor(red: 50.0 / 255, green: 56.0 / 255, blue: 60.0 / 255, alpha: 1.0)
@@ -15,6 +16,7 @@ class ArticleWebViewController: UIViewController, WKNavigationDelegate {
   let backgroundView = UIView()
   let shareView = UIView()
   var article: Article!
+  var articleStocks = ArticleStocks.sharedInstance
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -51,7 +53,7 @@ class ArticleWebViewController: UIViewController, WKNavigationDelegate {
     setShareButton(self.view.frame.width/8 * 7, tag: 4, imageName: "RSS_images/bookmark_icon")
     
     UIView.animate(withDuration: 0.3, animations: {() -> Void in
-      self.shareView.frame.origin = CGPoint(x: 0, y: self.view.frame.height - 100)
+      self.shareView.frame.origin = CGPoint(x: 0, y: self.view.frame.height - 150)
     })
   }
   
@@ -71,7 +73,7 @@ class ArticleWebViewController: UIViewController, WKNavigationDelegate {
   }
   
   func setShareView() {
-    shareView.frame = CGRect(x: 0, y: self.view.frame.height, width: self.view.frame.width, height: 100)
+    shareView.frame = CGRect(x: 0, y: self.view.frame.height-50, width: self.view.frame.width, height: 100)
     shareView.backgroundColor = UIColor.white
     shareView.layer.cornerRadius = 3
     backgroundView.addSubview(shareView)
@@ -88,8 +90,48 @@ class ArticleWebViewController: UIViewController, WKNavigationDelegate {
     shareView.addSubview(shareButton)
   }
   
+  func showAlert(text: String) {
+    let alertController = UIAlertController(title: text, message: nil, preferredStyle: UIAlertControllerStyle.alert)
+    let alertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+    alertController.addAction(alertAction)
+    self.present(alertController, animated: true, completion: nil)
+  }
+
+  func isStocked() -> Bool {
+    for myArticle in articleStocks.articles {
+      if myArticle.link == article.link {
+        return true
+      }
+    }
+    return false
+  }
+  
   @objc func tapButton(_ sender: UIButton) {
-    
+    switch sender.tag {
+    case 1:
+      // TODO: iOS11以降に対応(FacebookSDKに変更)
+      let facebookVC = SLComposeViewController(forServiceType: SLServiceTypeFacebook)
+      facebookVC?.setInitialText(wkWebView.title)
+      facebookVC?.add(wkWebView.url!)
+      
+      self.present(facebookVC!, animated: true, completion: nil)
+    case 2:
+      // TODO: iOS11以降に対応(TwitterSDKに変更)
+      let twitterVC = SLComposeViewController(forServiceType: SLServiceTypeTwitter)
+      twitterVC?.setInitialText(wkWebView.title)
+      twitterVC?.add(wkWebView.url!)
+      
+      self.present(twitterVC!, animated: true, completion: nil)
+    case 3:
+      UIApplication.shared.open(wkWebView.url!, options: [:], completionHandler: nil)
+    default:
+      if isStocked() {
+        showAlert(text: "既にブックマークに追加済みです")
+      } else {
+        showAlert(text: "ブックマークに追加しました")
+        articleStocks.add(article)
+      }
+    }
   }
   
   override func didReceiveMemoryWarning() {

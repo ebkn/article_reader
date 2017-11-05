@@ -57,10 +57,10 @@ class ArticleTableView: UITableView, UITableViewDelegate, UITableViewDataSource,
     } else {
       let cell = tableView.dequeueReusableCell(withIdentifier: "ArticleTableViewCell", for: indexPath) as! ArticleTableViewCell
       let article = self.articles[indexPath.row]
-      print(article.title)
       cell.title.text = article.title
       cell.descript.text = article.descript
-      cell.date.text = conversionDateFormat(article.date)
+      let date = Date.convertDateFromString(inputDate: article.date)
+      cell.date.text = date.convertStringFromDate()
       
       return cell
     }
@@ -121,17 +121,6 @@ class ArticleTableView: UITableView, UITableViewDelegate, UITableViewDataSource,
     queue.sync {
       self.reloadData()
     }
-  }
-  
-  func conversionDateFormat(_ dateString: String) -> String {
-    let inputFormatter = DateFormatter()
-    inputFormatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss Z"
-    let date: Date! = inputFormatter.date(from: dateString)
-    
-    let outputFormatter = DateFormatter()
-    outputFormatter.dateFormat = "yyy/MM/dd HH:mm"
-    
-    return outputFormatter.string(from: date)
   }
 }
 
